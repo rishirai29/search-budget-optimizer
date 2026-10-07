@@ -32,6 +32,8 @@ pip install -r requirements.txt
 python optimizer.py
 ```
 
+The chart (`allocation_chart.png`) opens automatically at the end of the run. Use `python optimizer.py --no-open` to skip that, for example on a server.
+
 ## Limitations
 
 - The power-law response curve is a modelling assumption; real accounts show seasonality, auction effects, and interaction between campaigns.

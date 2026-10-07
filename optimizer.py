@@ -22,6 +22,9 @@ Validation:                (1) hold-out weeks -> R^2 / MAPE of the fitted curves
                            (3) repeated over many random seeds
 """
 import json
+import os
+import subprocess
+import sys
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
@@ -85,6 +88,19 @@ def optimise(a, b, base):
     return res.x
 
 
+def open_chart(path):
+    """Open the saved chart in the default image viewer (skipped with --no-open)."""
+    try:
+        if sys.platform.startswith("win"):
+            os.startfile(path)
+        elif sys.platform == "darwin":
+            subprocess.run(["open", path], check=False)
+        else:
+            subprocess.run(["xdg-open", path], check=False)
+    except Exception:
+        pass  # headless machines (e.g. servers) simply skip opening the image
+
+
 def run_once(seed):
     df, base, a_true, b_true = simulate(seed)
     fit, metrics = fit_curves(df)
@@ -141,3 +157,6 @@ if __name__ == "__main__":
 
     print(json.dumps(summary, indent=2))
     print(alloc[["campaign", "current_weekly_spend", "optimised_weekly_spend", "change_pct"]].to_string(index=False))
+    print("\nChart saved to allocation_chart.png")
+    if "--no-open" not in sys.argv:
+        open_chart("allocation_chart.png")
